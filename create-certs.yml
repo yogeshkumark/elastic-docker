@@ -1,0 +1,34 @@
+[docker@kfdcel02 elk]$ cat create-certs.yml
+version: '2.2'
+
+services:
+  create_certs:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${VERSION}
+    container_name: create_certs
+    environment:
+      - http_proxy=http://proxy.hlag.com:11009
+      - https_proxy=https://proxy.hlag.com:11009
+    command: >
+      bash -c '
+        yum install -y -q -e 0 unzip;
+        if [[ ! -f /certs/bundle.zip ]]; then
+          bin/elasticsearch-certutil cert --silent --pem --in config/certificates/instances.yml -out /certs/bundle.zip;
+          unzip /certs/bundle.zip -d /certs;
+        fi;
+        chown -R 1000:0 /certs
+      '
+    working_dir: /usr/share/elasticsearch
+    volumes:
+      - certs:/certs
+      - .:/usr/share/elasticsearch/config/certificates
+    networks:
+      - elastic
+
+volumes:
+  certs:
+    driver: local
+
+networks:
+  elastic:
+    driver: bridge
+[docker@kfdcel02 elk]$

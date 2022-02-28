@@ -1,0 +1,60 @@
+#[docker@kfdcel02 elk]$ cat elastic-docker-tls.yml
+version: '2.2'
+
+services:
+  esdb02:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${VERSION}
+    container_name: esdb02
+    environment:
+      - node.name=esdb02
+      - cluster.name=docker-cluster
+      - discovery.seed_hosts=kfdcel01.hlcl.com,kfdcel03.hlcl.com,kfdcel04.hlcl.com,kfdcel05.hlcl.com,kfdcel06.hlcl.com,kfdcel07.hlcl.com
+      - cluster.initial_master_nodes=esdb02
+      - transport.port=6300
+      - http.port=6200
+      - network.publish_host=kfdcel02.hlcl.com
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms12g -Xmx12g"
+      - xpack.license.self_generated.type=trial
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true
+      - xpack.security.http.ssl.key=$CERTS_DIR/esdb/esdb.key
+      - xpack.security.http.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
+      - xpack.security.http.ssl.certificate=$CERTS_DIR/esdb/esdb.crt
+      - xpack.security.transport.ssl.enabled=true
+      - xpack.security.transport.ssl.verification_mode=certificate
+      - xpack.security.transport.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
+      - xpack.security.transport.ssl.certificate=$CERTS_DIR/esdb/esdb.crt
+      - xpack.security.transport.ssl.key=$CERTS_DIR/esdb/esdb.key
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - /var/lib/elasticsearch:/usr/share/elasticsearch/data
+      #- data01:/usr/share/elasticsearch/data
+      - new_certs:$CERTS_DIR
+    ports:
+      - 6200:6200
+      - 6300:6300
+      - 9200:6200
+     #- 9300:6200
+    networks:
+      - es_network
+
+volumes:
+  new_certs:
+    driver: local
+
+networks:
+  es_network:
+    driver: bridge
+    driver_opts:
+        com.docker.network.enable_ipv6: "true"
+    ipam:
+        driver: default
+        config:
+             - subnet: 172.16.4.0/24
+               gateway: 172.16.4.1
+
+#[docker@kfdcel02 elk]$

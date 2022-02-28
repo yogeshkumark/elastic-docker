@@ -1,0 +1,50 @@
+[docker@kfdcel02 elk]$ cat instances.yml
+instances:
+  - name: esdb-prod1
+    dns:
+      - esdb-prod1
+      - kfdcel02.hlcl.com
+    ip:
+      - 194.9.161.144
+
+  - name: esdb-prod2
+    dns:
+      - esdb-prod2
+      - kfdcel03.hlcl.com
+    ip:
+      - 194.9.161.145
+
+  - name: esdb-prod3
+    dns:
+      - kfdcel04.hlcl.com
+      - esdb-prod3
+    ip:
+      - 194.9.161.146
+
+  - name: esdb-prod4
+    dns:
+      - kfdcel05.hlcl.com
+      - esdb-prod4
+    ip:
+      - 194.9.161.146
+
+  - name: esdb-prod5
+    dns:
+      - kfdcel06.hlcl.com
+      - esdb-prod5
+    ip:
+      - 194.9.161.179
+
+  - name: esdb-prod6
+    dns:
+      - kfdcel07.hlcl.com
+      - esdb-prod6
+    ip:
+      - 194.9.161.180
+
+  - name: hlog-kibana
+    dns:
+      - kfdcel01.hlcl.com
+      - hlog-kibana
+    ip:
+      - 194.9.161.143
